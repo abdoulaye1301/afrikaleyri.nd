@@ -32,12 +32,31 @@ if Chargement:
     # donnee["Mois"] = donnee["Date"].dt.month
 
     # Choix de l’onglet
+    # Définir les bornes du slider
+    min_date = min(donnee["Date"])
+    max_date = max(donnee["Date"])
+
+    # Slider Streamlit pour filtrer une plage de dates
+    start_date, end_date = st.slider(
+        "Sélectionnez une plage de dates",
+        min_value=min_date,
+        max_value=max_date,
+        value=(min_date, max_date),  # valeur par défaut (tout)
+        format="YYYY/MM/DD"
+    )
+
+    # Filtrer les données selon la plage sélectionnée
+    donnee = donnee[(donnee["Date"] >= start_date) & (donnee["Date"] <= end_date)]
+
+    # Afficher les résultats
+    st.write(f"Résultats entre {start_date} et {end_date} :")
+
     menu = st.sidebar.selectbox("Navigation", ["Kamlac", "Opération"])
 
     if menu == "Kamlac":
         st.subheader("Contenu de la feuille sélectionnée :")
         st.dataframe(donnee)
-
+        operation="Kamlac"
     elif menu == "Opération":
         operation = st.sidebar.selectbox(
             "Type d'opération", ("Commande", "Livraison", "Aucune")
@@ -58,12 +77,23 @@ if Chargement:
         )
 
     donnee_agre = (
-        donnee.groupby(["Date", "Prenom_Nom_RZ", "secteur", "Operation"])
+        donnee.groupby(["Date", "Prenom_Nom_RZ", "secteur","Telephone_Client","Produit", "Operation"])
         .agg({"Nom_du_magasin": "count", "Quantites": "sum", "Prix Total": "sum"})
         .reset_index()
     )
-
-    nom_nouvelle_feuille = st.sidebar.text_input("Nom de la feuille :")
+    
+    st.subheader("Regroupement des ventes et ordonnées par Date et Prénom du RZ")
+    donnee_agre = donnee_agre.rename(
+        columns={
+            "Nom_du_magasin": "Nombre de magasins",
+            "Quantites": "Quantités",
+            "Prix Total": "Prix Total",
+        }
+    )
+    donnee_ordre = donnee_agre.sort_values(by=["Date", "Prenom_Nom_RZ"], ascending=False)
+    #donnee_agre["Date"] = donnee_agre["Date"].dt.strftime("%d/%m/%Y")
+    st.dataframe(donnee_ordre)
+    nom_nouvelle_feuille = st.sidebar.text_input("Nom de la feuille :",value=operation)
     if st.button("Sauvegarder"):
         # Définir le nom sous lequel la feuille sera enregistrée dans le fichier de destination
         if nom_nouvelle_feuille.strip() == "":
@@ -93,6 +123,9 @@ if Chargement:
 
                 # Ajouter la feuille modifiée
                 donnee.to_excel(writer, sheet_name=nom_nouvelle_feuille, index=False)
+                donnee_ordre.to_excel(writer, sheet_name=f"Récapitulatif des {nom_nouvelle_feuille}", index=False)
+            
+
 
             st.success("✅ Fichier modifié avec succès.")
 
@@ -103,7 +136,5 @@ if Chargement:
                 file_name="KAMLAC_RZ.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             )
-    st.subheader("Regroupement des ventes et ordonnées par Date et Prénom du RZ")
-    st.dataframe(donnee_agre.sort_values(by=["Date", "Prenom_Nom_RZ"], ascending=False))
 else:
     st.info("Veuillez charger un fichier pour commencer.")
