@@ -77,15 +77,14 @@ if Chargement:
         )
 
     donnee_agre = (
-        donnee.groupby(["Date", "Prenom_Nom_RZ", "secteur","Telephone_Client","Produit", "Operation"])
-        .agg({"Nom_du_magasin": "count", "Quantites": "sum", "Prix Total": "sum"})
+        donnee.groupby(["Date", "Prenom_Nom_RZ", "secteur","Produit"])
+        .agg({"Quantites": "sum", "Prix Total": "sum"})
         .reset_index()
     )
     
     st.subheader("Regroupement des ventes et ordonnées par Date et Prénom du RZ")
     donnee_agre = donnee_agre.rename(
         columns={
-            "Nom_du_magasin": "Nombre de magasins",
             "Quantites": "Quantités",
             "Prix Total": "Prix Total",
         }
