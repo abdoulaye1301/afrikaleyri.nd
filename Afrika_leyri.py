@@ -136,4 +136,4 @@ if Chargement:
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             )
 else:
-    st.info("Veuillez charger un fichier pour commencer le travail.")
+    st.info("Veuillez charger un fichier pour commencer.")
