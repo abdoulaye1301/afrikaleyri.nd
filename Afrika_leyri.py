@@ -179,7 +179,7 @@ if Chargement:
 
                 # Ajouter la feuille modifiée
                 donnee.to_excel(writer, sheet_name=nom_nouvelle_feuille, index=False)
-                donnee_ordre.to_excel(writer, sheet_name=f"Récapitulatif des {nom_nouvelle_feuille}", index=False)
+                #donnee_ordre.to_excel(writer, sheet_name=f"Récapitulatif des {nom_nouvelle_feuille}", index=False)
             
 
 
