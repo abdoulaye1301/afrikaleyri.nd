@@ -3,6 +3,11 @@ import pandas as pd
 from PIL import Image
 from openpyxl import load_workbook
 import io
+import matplotlib.pyplot as plt
+from io import BytesIO
+from matplotlib.patches import Rectangle
+from matplotlib.patches import FancyBboxPatch
+import textwrap
 
 st.set_page_config(
     page_title="Ingénieur NDAO", layout="wide", page_icon="ndao abdoulaye.png"
@@ -75,23 +80,75 @@ if Chargement:
         st.write(
             "La colonne Opération ne se trouve pas dans les colonnes selectionnées"
         )
+    if operation == "Livraison":
+        donnee_agre = (
+            donnee.groupby(["Date", "Prenom_Nom_RZ", "secteur","Produit"])
+            .agg({"Quantites": "sum", "Prix Total": "sum"})
+            .reset_index()
+        )
 
-    donnee_agre = (
-        donnee.groupby(["Date", "Prenom_Nom_RZ", "secteur","Produit"])
-        .agg({"Quantites": "sum", "Prix Total": "sum"})
-        .reset_index()
-    )
-    
-    st.subheader("Regroupement des ventes et ordonnées par Date et Prénom du RZ")
-    donnee_agre = donnee_agre.rename(
+        donnee_agre = donnee_agre.rename(
         columns={
             "Quantites": "Quantités",
             "Prix Total": "Prix Total",
         }
-    )
+        )
+    elif menu == "Kamlac" or operation == "Commande":
+        donnee_agre = (
+            donnee.groupby(["Date", "Prenom_Nom_RZ", "zone","Produit"])
+            .agg({"Quantites": "sum"})
+            .reset_index()
+        )
+
+        donnee_agre = donnee_agre.rename(
+        columns={
+            "Quantites": "Quantités",
+        }
+        )
+  
     donnee_ordre = donnee_agre.sort_values(by=["Date", "Prenom_Nom_RZ"], ascending=False)
+
+
+    # 🔧 Fonction pour créer l'image avec les infos en haut
+    def generate_png_report(df, date_min,date_max):
+        fig, ax = plt.subplots(figsize=(12, len(df) * 0.6+1.5))
+        ax.axis('off')
+        # ✅ Texte commentaire à droite du cadre
+        # retour à la ligne pour le commentaire
+        #df["Commentaire"] = df["Commentaire"].apply(
+         # lambda x: (textwrap.wrap(x, width=30)) if isinstance(x, str) else x)
+            #textwrap.fill(commentaire, width=45)
+        # Dimensions du rectangle d’en-tête (valeurs relatives à l’axe)
+        header_x = 0.001    # gauche
+        header_y = 0.85    # position verticale bas du bloc
+        header_width = 0.996
+        header_height = 0.12
+
+        # ✅ Dessiner le rectangle d'encadrement
+        rect = Rectangle((header_x, header_y), header_width, header_height,
+                        transform=ax.transAxes,
+                        fill=False, color='black', linewidth=1.5)
+        ax.add_patch(rect)
+        # En-tête
+        plt.text(0.45, 0.9, f"Rapport de Stock du {date_min} au {date_max}", ha='center', fontsize=14, transform=ax.transAxes, weight='bold')
+        # Tableau matplotlib
+        table = ax.table(cellText=df.values,
+                        colLabels=df.columns,
+                        cellLoc='center',
+                        loc='center')
+
+        table.scale(1, 1.5)
+        buffer = BytesIO()
+        plt.savefig(buffer, format='png', bbox_inches='tight', dpi=200)
+        plt.close()
+        buffer.seek(0)
+        return buffer
+    
+
+
     #donnee_agre["Date"] = donnee_agre["Date"].dt.strftime("%d/%m/%Y")
-    st.dataframe(donnee_ordre)
+    
+
     nom_nouvelle_feuille = st.sidebar.text_input("Nom de la feuille :",value=operation)
     if st.button("Sauvegarder"):
         # Définir le nom sous lequel la feuille sera enregistrée dans le fichier de destination
@@ -135,5 +192,21 @@ if Chargement:
                 file_name="KAMLAC_RZ.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             )
+
+
+    # Afficher le tableau récapitulatif
+    
+    st.subheader("Regroupement des ventes et ordonnées par Date et Prénom du RZ")
+    st.dataframe(donnee_ordre)
+    png_bytes = generate_png_report(donnee_ordre, date_min=start_date, date_max=end_date)
+    # ✅ Afficher l'aperçu de l'image directement dans l'interface
+    #st.image(png_bytes, caption="", use_container_width=True)
+    #png_bytes = generate_png_report(donnee_ordr[(donnee_ordr["TATA"] == prom)])
+    st.download_button(
+        label="📥 Télécharger le rapport en PNG",
+        data=png_bytes,
+        file_name=f"{operation}_du_{start_date}_au_{end_date}.png",
+        mime="image/png"
+    )
 else:
     st.info("Veuillez charger un fichier pour commencer.")
