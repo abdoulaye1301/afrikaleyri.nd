@@ -130,7 +130,7 @@ if Chargement:
                         fill=False, color='black', linewidth=1.5)
         ax.add_patch(rect)
         # En-tête
-        plt.text(0.45, 0.9, f"Rapport de Stock du {date_min} au {date_max}", ha='center', fontsize=14, transform=ax.transAxes, weight='bold')
+        plt.text(0.45, 0.9, f"{operation} du {date_min} au {date_max}", ha='center', fontsize=14, transform=ax.transAxes, weight='bold')
         # Tableau matplotlib
         table = ax.table(cellText=df.values,
                         colLabels=df.columns,
