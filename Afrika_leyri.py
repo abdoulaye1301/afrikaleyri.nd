@@ -183,7 +183,7 @@ if Chargement:
             
 
 
-            st.success("✅ Fichier modifié avec succès.")
+            st.success("✅ Fichier enregistré avec succès.")
 
             # Bouton de téléchargement
             st.download_button(
