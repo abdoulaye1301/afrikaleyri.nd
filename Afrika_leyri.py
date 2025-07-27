@@ -198,15 +198,16 @@ if Chargement:
     
     st.subheader("Regroupement des ventes et ordonnées par Date et Prénom du RZ")
     st.dataframe(donnee_ordre)
-    png_bytes = generate_png_report(donnee_ordre, date_min=start_date, date_max=end_date)
-    # ✅ Afficher l'aperçu de l'image directement dans l'interface
-    #st.image(png_bytes, caption="", use_container_width=True)
-    #png_bytes = generate_png_report(donnee_ordr[(donnee_ordr["TATA"] == prom)])
-    st.download_button(
-        label="📥 Télécharger le rapport en PNG",
-        data=png_bytes,
-        file_name=f"{operation}_du_{start_date}_au_{end_date}.png",
-        mime="image/png"
-    )
+    if operation == "Commande":
+        png_bytes = generate_png_report(donnee_ordre, date_min=start_date, date_max=end_date)
+        # ✅ Afficher l'aperçu de l'image directement dans l'interface
+        #st.image(png_bytes, caption="", use_container_width=True)
+        #png_bytes = generate_png_report(donnee_ordr[(donnee_ordr["TATA"] == prom)])
+        st.download_button(
+            label="📥 Télécharger le rapport en PNG",
+            data=png_bytes,
+            file_name=f"{operation}_du_{start_date}_au_{end_date}.png",
+            mime="image/png"
+        )
 else:
     st.info("Veuillez charger un fichier pour commencer.")
