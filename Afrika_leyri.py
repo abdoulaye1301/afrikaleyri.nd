@@ -17,7 +17,7 @@ st.logo(profil)
 
 st.title("Éditeur Excel avec plusieurs feuilles")
 # Upload du fichier Excel
-Chargement = pd.read_excel("Tableau_bord_23_au_26_07.xlsx", engine='openpyxl', sheet_name="Semaine 1")
+Chargement = pd.read_excel("Tableau_bord_23_au_26_07.xlsx", engine='openpyxl', sheet_name="KAMLAC")
 #st.sidebar.file_uploader(" 📁 Charger un fichier Excel", type=["xlsx"])
 
 
