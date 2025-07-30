@@ -103,7 +103,8 @@ elif menu == "Opération" or operation == "Commande":
     }
     )
 
-donnee_ordre = donnee_agre.sort_values(by=["Date", "Prenom_Nom_RZ"], ascending=False)
+if menu == "Opération" :
+    donnee_ordre = donnee_agre.sort_values(by=["Date", "Prenom_Nom_RZ"], ascending=False)
 
 
 # 🔧 Fonction pour créer l'image avec les infos en haut
