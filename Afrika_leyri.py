@@ -122,10 +122,10 @@ def generate_png_report(df, date_min,date_max):
     header_height = 0.12
 
     # ✅ Dessiner le rectangle d'encadrement
-    rect = Rectangle((header_x, header_y), header_width, header_height,
-                    transform=ax.transAxes,
-                    fill=False, color='black', linewidth=1.5)
-    ax.add_patch(rect)
+    #rect = Rectangle((header_x, header_y), header_width, header_height,
+     #               transform=ax.transAxes,
+      #              fill=False, color='black', linewidth=1.5)
+    #ax.add_patch(rect)
     # En-tête
     plt.text(0.45, 0.9, f"{operation} du {date_min} au {date_max}", ha='center', fontsize=14, transform=ax.transAxes, weight='bold')
     # Tableau matplotlib
