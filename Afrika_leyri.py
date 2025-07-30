@@ -158,12 +158,10 @@ if menu == "Données":
         else:
             # Copie de toutes les feuilles existantes dans un nouveau Excel
             output = io.BytesIO()
-            with pd.ExcelWriter(output, engine="openpyxl") as writer:
-                # Copier les anciennes feuilles
-                #for feuille in wb.sheetnames:
-                 #   data = pd.read_excel(memorise_nouvelle_feuille, sheet_name=feuille)
-                Chargement.to_excel(writer, sheet_name=nom_nouvelle_feuille, index=False)
-
+            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                Chargement.to_excel(writer, index=False, sheet_name='Feuille1')
+            output.seek(0)  # repositionner au début du fichier
+            memorise_nouvelle_feuille = output
                 # Ajouter la feuille modifiée
                 #donnee.to_excel(writer, sheet_name=nom_nouvelle_feuille, index=False)
                 #donnee_ordre.to_excel(writer, sheet_name=f"Récapitulatif des {nom_nouvelle_feuille}", index=False)
@@ -175,7 +173,7 @@ if menu == "Données":
             # Bouton de téléchargement
             st.download_button(
                 label="📥 Télécharger",
-                data=output.getvalue(),
+                data=memorise_nouvelle_feuille,
                 file_name="KAMLAC_RZ.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             )
