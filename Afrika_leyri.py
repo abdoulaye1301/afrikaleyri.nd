@@ -147,7 +147,7 @@ def generate_png_report(df, date_min,date_max):
 
 if menu == "Données":
     # Afficher les résultats
-    st.write(f"Résultats entre {start_date} et {end_date} :")
+    #st.write(f"Résultats entre {start_date} et {end_date} :")
     nom_nouvelle_feuille = operation
     if st.button("Sauvegarder"):
         # Définir le nom sous lequel la feuille sera enregistrée dans le fichier de destination
@@ -159,7 +159,7 @@ if menu == "Données":
             # Copie de toutes les feuilles existantes dans un nouveau Excel
             output = io.BytesIO()
             with pd.ExcelWriter(output, engine='openpyxl') as writer:
-                Chargement.to_excel(writer, index=False, sheet_name='Feuille1')
+                donnee.to_excel(writer, index=False, sheet_name='Feuille1')
             output.seek(0)  # repositionner au début du fichier
             memorise_nouvelle_feuille = output
                 # Ajouter la feuille modifiée
