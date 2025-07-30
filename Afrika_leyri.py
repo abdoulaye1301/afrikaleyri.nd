@@ -147,7 +147,7 @@ def generate_png_report(df, date_min,date_max):
 #donnee_agre["Date"] = donnee_agre["Date"].dt.strftime("%d/%m/%Y")
 
 
-nom_nouvelle_feuille = st.sidebar.text_input("Nom de la feuille :",value=operation)
+nom_nouvelle_feuille = operation
 if st.button("Sauvegarder"):
     # Définir le nom sous lequel la feuille sera enregistrée dans le fichier de destination
     if nom_nouvelle_feuille.strip() == "":
@@ -160,7 +160,7 @@ if st.button("Sauvegarder"):
         wb = load_workbook(memorise_nouvelle_feuille)
 
         # Supprimer la feuille si elle existe déjà (et n'est pas la seule)
-        if nom_nouvelle_feuille in wb.sheetnames:
+        if operation in wb.sheetnames:
             if len(wb.sheetnames) > 1:
                 del wb[nom_nouvelle_feuille]
             else:
