@@ -146,50 +146,50 @@ def generate_png_report(df, date_min,date_max):
 
 #donnee_agre["Date"] = donnee_agre["Date"].dt.strftime("%d/%m/%Y")
 
+if menu == "Données":
+    nom_nouvelle_feuille = operation
+    if st.button("Sauvegarder"):
+        # Définir le nom sous lequel la feuille sera enregistrée dans le fichier de destination
+        if nom_nouvelle_feuille.strip() == "":
+            st.warning(
+                "Veuillez renseigner le nom de la feuille dans la barre de naviagation."
+            )
+        else:
+            # Charger le fichier original dans openpyxl
+            memorise_nouvelle_feuille = io.BytesIO(Chargement.getvalue())
+            wb = load_workbook(memorise_nouvelle_feuille)
 
-nom_nouvelle_feuille = operation
-if st.button("Sauvegarder"):
-    # Définir le nom sous lequel la feuille sera enregistrée dans le fichier de destination
-    if nom_nouvelle_feuille.strip() == "":
-        st.warning(
-            "Veuillez renseigner le nom de la feuille dans la barre de naviagation."
-        )
-    else:
-        # Charger le fichier original dans openpyxl
-        memorise_nouvelle_feuille = io.BytesIO(Chargement.getvalue())
-        wb = load_workbook(memorise_nouvelle_feuille)
+            # Supprimer la feuille si elle existe déjà (et n'est pas la seule)
+            if operation in wb.sheetnames:
+                if len(wb.sheetnames) > 1:
+                    del wb[nom_nouvelle_feuille]
+                else:
+                    st.error("Impossible de supprimer la seule feuille visible.")
+                    st.stop()
 
-        # Supprimer la feuille si elle existe déjà (et n'est pas la seule)
-        if operation in wb.sheetnames:
-            if len(wb.sheetnames) > 1:
-                del wb[nom_nouvelle_feuille]
-            else:
-                st.error("Impossible de supprimer la seule feuille visible.")
-                st.stop()
+            # Copie de toutes les feuilles existantes dans un nouveau Excel
+            output = io.BytesIO()
+            with pd.ExcelWriter(output, engine="openpyxl") as writer:
+                # Copier les anciennes feuilles
+                for feuille in wb.sheetnames:
+                    data = pd.read_excel(memorise_nouvelle_feuille, sheet_name=feuille)
+                    data.to_excel(writer, sheet_name=feuille, index=False)
 
-        # Copie de toutes les feuilles existantes dans un nouveau Excel
-        output = io.BytesIO()
-        with pd.ExcelWriter(output, engine="openpyxl") as writer:
-            # Copier les anciennes feuilles
-            for feuille in wb.sheetnames:
-                data = pd.read_excel(memorise_nouvelle_feuille, sheet_name=feuille)
-                data.to_excel(writer, sheet_name=feuille, index=False)
-
-            # Ajouter la feuille modifiée
-            donnee.to_excel(writer, sheet_name=nom_nouvelle_feuille, index=False)
-            #donnee_ordre.to_excel(writer, sheet_name=f"Récapitulatif des {nom_nouvelle_feuille}", index=False)
-        
+                # Ajouter la feuille modifiée
+                donnee.to_excel(writer, sheet_name=nom_nouvelle_feuille, index=False)
+                #donnee_ordre.to_excel(writer, sheet_name=f"Récapitulatif des {nom_nouvelle_feuille}", index=False)
+            
 
 
-        st.success("✅ Fichier enregistré avec succès.")
+            st.success("✅ Fichier enregistré avec succès.")
 
-        # Bouton de téléchargement
-        st.download_button(
-            label="📥 Télécharger",
-            data=output.getvalue(),
-            file_name="KAMLAC_RZ.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        )
+            # Bouton de téléchargement
+            st.download_button(
+                label="📥 Télécharger",
+                data=output.getvalue(),
+                file_name="KAMLAC_RZ.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            )
 
 
 # Afficher le tableau récapitulatif
