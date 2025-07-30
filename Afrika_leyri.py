@@ -193,9 +193,9 @@ if st.button("Sauvegarder"):
 
 
 # Afficher le tableau récapitulatif
-
-st.subheader("Regroupement des ventes et ordonnées par Date et Prénom du RZ")
-st.dataframe(donnee_ordre)
+if menu == "Opération" :
+    st.subheader("Regroupement des ventes et ordonnées par Date et Prénom du RZ")
+    st.dataframe(donnee_ordre)
 if operation == "Commande":
     png_bytes = generate_png_report(donnee_ordre, date_min=start_date, date_max=end_date)
     # ✅ Afficher l'aperçu de l'image directement dans l'interface
