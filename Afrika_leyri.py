@@ -195,7 +195,7 @@ if menu == "Données":
 
 # Afficher le tableau récapitulatif
 if menu == "Opération" :
-    st.subheader("Regroupement des ventes et ordonnées par Date et Prénom du RZ")
+    #st.subheader("Regroupement des ventes et ordonnées par Date et Prénom du RZ")
     st.dataframe(donnee_ordre)
 if operation == "Commande":
     png_bytes = generate_png_report(donnee_ordre, date_min=start_date, date_max=end_date)
