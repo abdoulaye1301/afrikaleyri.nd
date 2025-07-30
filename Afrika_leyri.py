@@ -50,8 +50,7 @@ end_date=col[3].selectbox("Fin",date1)
 # Filtrer les données selon la plage sélectionnée
 donnee = donnee[(donnee["Date"] >= start_date) & (donnee["Date"] <= end_date)]
 
-# Afficher les résultats
-st.write(f"Résultats entre {start_date} et {end_date} :")
+
 
 menu = st.sidebar.selectbox("Choisissez une option", ["Données", "Opération"])
 
@@ -147,6 +146,8 @@ def generate_png_report(df, date_min,date_max):
 #donnee_agre["Date"] = donnee_agre["Date"].dt.strftime("%d/%m/%Y")
 
 if menu == "Données":
+    # Afficher les résultats
+    st.write(f"Résultats entre {start_date} et {end_date} :")
     nom_nouvelle_feuille = operation
     if st.button("Sauvegarder"):
         # Définir le nom sous lequel la feuille sera enregistrée dans le fichier de destination
