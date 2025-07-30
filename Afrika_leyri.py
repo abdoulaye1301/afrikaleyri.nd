@@ -156,18 +156,6 @@ if menu == "Données":
                 "Veuillez renseigner le nom de la feuille dans la barre de naviagation."
             )
         else:
-            # Charger le fichier original dans openpyxl
-            memorise_nouvelle_feuille = io.BytesIO(Chargement.getvalue())
-            wb = load_workbook(memorise_nouvelle_feuille)
-
-            # Supprimer la feuille si elle existe déjà (et n'est pas la seule)
-            if operation in wb.sheetnames:
-                if len(wb.sheetnames) > 1:
-                    del wb[nom_nouvelle_feuille]
-                else:
-                    st.error("Impossible de supprimer la seule feuille visible.")
-                    st.stop()
-
             # Copie de toutes les feuilles existantes dans un nouveau Excel
             output = io.BytesIO()
             with pd.ExcelWriter(output, engine="openpyxl") as writer:
