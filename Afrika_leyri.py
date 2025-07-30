@@ -158,7 +158,7 @@ if menu == "Données":
         else:
             # Copie de toutes les feuilles existantes dans un nouveau Excel
             output = io.BytesIO()
-            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+            with pd.ExcelWriter(output, engine='openpyxl') as writer:
                 Chargement.to_excel(writer, index=False, sheet_name='Feuille1')
             output.seek(0)  # repositionner au début du fichier
             memorise_nouvelle_feuille = output
