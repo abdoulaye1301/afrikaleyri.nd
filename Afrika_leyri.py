@@ -71,8 +71,8 @@ elif menu == "Opération":
         nomcol.remove("Produit")
         nomcol.remove("Prix Total")
        # st.dataframe(donnee[nomcol])
-    else:
-        st.write("Choisissez une opération pour continuer")
+    #else:
+       # st.write("Choisissez une opération pour continuer")
 else:
     st.write(
         "La colonne Opération ne se trouve pas dans les colonnes selectionnées"
