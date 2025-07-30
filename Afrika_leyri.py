@@ -15,7 +15,7 @@ st.set_page_config(
 profil = Image.open("Logo Afrika Leyri.png")
 st.logo(profil)
 
-st.title("Éditeur Excel avec plusieurs feuilles")
+st.title("INFORMATION SUR LES DONNÉES DES RZ")
 # Upload du fichier Excel
 Chargement = pd.read_excel("Tableau_bord_23_au_26_07.xlsx", engine='openpyxl', sheet_name="KAMLAC")
 #st.sidebar.file_uploader(" 📁 Charger un fichier Excel", type=["xlsx"])
@@ -53,12 +53,12 @@ donnee = donnee[(donnee["Date"] >= start_date) & (donnee["Date"] <= end_date)]
 # Afficher les résultats
 st.write(f"Résultats entre {start_date} et {end_date} :")
 
-menu = st.sidebar.selectbox("Navigation", ["Kamlac", "Opération"])
+menu = st.sidebar.selectbox("Choisissez une option", ["Données", "Opération"])
 
-if menu == "Kamlac":
+if menu == "Données":
     st.subheader("Contenu de la feuille sélectionnée :")
     st.dataframe(donnee)
-    operation="Kamlac"
+    operation="Données"
 elif menu == "Opération":
     operation = st.sidebar.selectbox(
         "Type d'opération", ("Commande", "Livraison", "Aucune")
@@ -70,14 +70,14 @@ elif menu == "Opération":
         nomcol.remove("Quantites")
         nomcol.remove("Produit")
         nomcol.remove("Prix Total")
-        st.dataframe(donnee[nomcol])
+       # st.dataframe(donnee[nomcol])
     else:
-        st.dataframe(donnee)
+        st.write("Choisissez une opération pour continuer")
 else:
     st.write(
         "La colonne Opération ne se trouve pas dans les colonnes selectionnées"
     )
-if operation == "Livraison":
+if menu == "Opération" or operation == "Livraison":
     donnee_agre = (
         donnee.groupby(["Date", "Prenom_Nom_RZ", "secteur","Produit"])
         .agg({"Quantites": "sum", "Prix Total": "sum"})
@@ -90,7 +90,7 @@ if operation == "Livraison":
         "Prix Total": "Prix Total",
     }
     )
-elif menu == "Kamlac" or operation == "Commande":
+elif menu == "Opération" or operation == "Commande":
     donnee_agre = (
         donnee.groupby(["Date", "Prenom_Nom_RZ", "zone","Produit"])
         .agg({"Quantites": "sum"})
