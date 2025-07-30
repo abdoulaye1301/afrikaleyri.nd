@@ -91,7 +91,7 @@ if menu == "Opération" or operation == "Livraison":
     )
 elif menu == "Opération" or operation == "Commande":
     donnee_agre = (
-        donnee.groupby(["Date", "Prenom_Nom_RZ", "zone","Produit"])
+        donnee.groupby(["Date", "Prenom_Nom_RZ","Produit"])
         .agg({"Quantites": "sum"})
         .reset_index()
     )
