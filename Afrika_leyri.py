@@ -172,12 +172,12 @@ if menu == "Données":
             output = io.BytesIO()
             with pd.ExcelWriter(output, engine="openpyxl") as writer:
                 # Copier les anciennes feuilles
-                for feuille in wb.sheetnames:
-                    data = pd.read_excel(memorise_nouvelle_feuille, sheet_name=feuille)
-                    data.to_excel(writer, sheet_name=feuille, index=False)
+                #for feuille in wb.sheetnames:
+                 #   data = pd.read_excel(memorise_nouvelle_feuille, sheet_name=feuille)
+                Chargement.to_excel(writer, sheet_name=nom_nouvelle_feuille, index=False)
 
                 # Ajouter la feuille modifiée
-                donnee.to_excel(writer, sheet_name=nom_nouvelle_feuille, index=False)
+                #donnee.to_excel(writer, sheet_name=nom_nouvelle_feuille, index=False)
                 #donnee_ordre.to_excel(writer, sheet_name=f"Récapitulatif des {nom_nouvelle_feuille}", index=False)
             
 
