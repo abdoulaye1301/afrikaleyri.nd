@@ -34,6 +34,7 @@ Chargement = pd.read_excel("Tableau_bord_23_au_26_07.xlsx", engine='openpyxl', s
 donnee = Chargement.copy()
 # Définir les chemins des fichiers source et destination
 donnee["Date"] = donnee["Date"].dt.date
+donnee=donnee.sort_values(by="Date", ascending=False)
 donnee["Prix Total"] = donnee["Quantites"] * donnee["Prix_Unitaire"]
 # donnee["Mois"] = donnee["Date"].dt.month
 
