@@ -222,6 +222,6 @@ if operation == "Commande":
     st.download_button(
         label="📥 Télécharger le rapport en PNG",
         data=png_bytes,
-        file_name=f"{operation}_du_{start_date}_au_{end_date}.png",
+        file_name=f"{operation}_du__{end_date}.png",
         mime="image/png"
     )
