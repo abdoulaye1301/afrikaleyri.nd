@@ -44,22 +44,53 @@ date1 = donnee["Date"].unique().tolist()
 
 # Slider Streamlit pour filtrer une plage de dates
 col=st.columns(5)
-start_date=col[1].selectbox("Début",date1)
-end_date=col[3].selectbox("Fin",date1)
 
+# Lire toutes les feuilles
+# xls = pd.ExcelFile(Chargement)
+#feuilles = Chargement.sheet_names
 
-# Filtrer les données selon la plage sélectionnée
-donnee = donnee[(donnee["Date"] >= start_date) & (donnee["Date"] <= end_date)]
+# Choisir une feuille à modifier
+#feuille_selectionnee = st.sidebar.selectbox(
+ #   "Choisissez une feuille à éditer :", feuilles
+#)
+
+# Charger la feuille sélectionnée
+donnee = Chargement.copy()
+# Définir les chemins des fichiers source et destination
+donnee["Date"] = donnee["Date"].dt.date
+donnee=donnee.sort_values(by="Date", ascending=False)
+donnee["Prix Total"] = donnee["Quantites"] * donnee["Prix_Unitaire"]
+# donnee["Mois"] = donnee["Date"].dt.month
+
+# Choix de l’onglet
+# Définir les bornes du slider
+date1 = donnee["Date"].unique().tolist()
+
+# Slider Streamlit pour filtrer une plage de dates
+col=st.columns(5)
 
 
 
 menu = st.sidebar.selectbox("Choisissez une option", ["Données", "Opération"])
 
 if menu == "Données":
+    
+    start_date=col[1].selectbox("Début",date1)
+    end_date=col[3].selectbox("Fin",date1)
+
+
+    # Filtrer les données selon la plage sélectionnée
+    donnee = donnee[(donnee["Date"] >= start_date) & (donnee["Date"] <= end_date)]
     st.subheader("Contenu de la feuille sélectionnée :")
     st.dataframe(donnee)
     operation="Données"
 elif menu == "Opération":
+    # Sélectionner la plage de dates
+    end_date=col[2].selectbox("Selectionnez une date",date1)
+
+
+    # Filtrer les données selon la plage sélectionnée
+    donnee = donnee[(donnee["Date"] == end_date)]
     operation = st.sidebar.selectbox(
         "Type d'opération", ("Commande", "Livraison", "Aucune")
     )
@@ -77,7 +108,7 @@ else:
     st.write(
         "La colonne Opération ne se trouve pas dans les colonnes selectionnées"
     )
-if menu == "Opération" or operation == "Livraison":
+if menu == "Opération" and operation == "Livraison":
     donnee_agre = (
         donnee.groupby(["Date", "Prenom_Nom_RZ", "secteur","Produit"])
         .agg({"Quantites": "sum", "Prix Total": "sum"})
@@ -90,9 +121,10 @@ if menu == "Opération" or operation == "Livraison":
         "Prix Total": "Prix Total",
     }
     )
-elif menu == "Opération" or operation == "Commande":
+    donnee_ordre = donnee_agre.sort_values(by=["Date", "Prenom_Nom_RZ"], ascending=False)
+elif menu == "Opération" and operation == "Commande":
     donnee_agre = (
-        donnee.groupby(["Date", "Prenom_Nom_RZ","Produit"])
+        donnee.groupby(["Prenom_Nom_RZ","Produit"])
         .agg({"Quantites": "sum"})
         .reset_index()
     )
@@ -102,13 +134,11 @@ elif menu == "Opération" or operation == "Commande":
         "Quantites": "Quantités",
     }
     )
-
-if menu == "Opération" :
-    donnee_ordre = donnee_agre.sort_values(by=["Date", "Prenom_Nom_RZ"], ascending=False)
+    donnee_ordre = donnee_agre.sort_values(by=["Prenom_Nom_RZ"], ascending=False)
 
 
 # 🔧 Fonction pour créer l'image avec les infos en haut
-def generate_png_report(df, date_min,date_max):
+def generate_png_report(df,date_max):
     fig, ax = plt.subplots(figsize=(12, len(df) * 0.6+1.5))
     ax.axis('off')
     # ✅ Texte commentaire à droite du cadre
@@ -128,7 +158,7 @@ def generate_png_report(df, date_min,date_max):
       #              fill=False, color='black', linewidth=1.5)
     #ax.add_patch(rect)
     # En-tête
-    plt.text(0.45, 0.9, f"{operation} du {date_min} au {date_max}", ha='center', fontsize=14, transform=ax.transAxes, weight='bold')
+    plt.text(0.45, 0.9, f"{operation} du {date_max}", ha='center', fontsize=14, transform=ax.transAxes, weight='bold')
     # Tableau matplotlib
     table = ax.table(cellText=df.values,
                     colLabels=df.columns,
@@ -185,7 +215,7 @@ if menu == "Opération" :
     #st.subheader("Regroupement des ventes et ordonnées par Date et Prénom du RZ")
     st.dataframe(donnee_ordre)
 if operation == "Commande":
-    png_bytes = generate_png_report(donnee_ordre, date_min=start_date, date_max=end_date)
+    png_bytes = generate_png_report(donnee_ordre, date_max=end_date)
     # ✅ Afficher l'aperçu de l'image directement dans l'interface
     #st.image(png_bytes, caption="", use_container_width=True)
     #png_bytes = generate_png_report(donnee_ordr[(donnee_ordr["TATA"] == prom)])
