@@ -107,7 +107,7 @@ def analyse_donnee(Chargement):
         st.write(
             "La colonne Opération ne se trouve pas dans les colonnes selectionnées"
         )
-    if menu == "Opération" and (operation == "Livraison" or operation == "LIVRAISON"):
+    if (menu == "Opération" and operation == "Livraison") or (menu == "Opération" and operation == "LIVRAISON"):
         donnee_agre = (
             donnee.groupby(["Date", "Prenom_Nom_RZ", "secteur","Produit"])
             .agg({"Quantites": "sum", "Prix Total": "sum"})
@@ -121,7 +121,7 @@ def analyse_donnee(Chargement):
         }
         )
         donnee_ordre = donnee_agre.sort_values(by=["Date", "Prenom_Nom_RZ"], ascending=False)
-    elif menu == "Opération" and (operation == "Commande" or operation == "COMMANDE"):
+    elif (menu == "Opération" and operation == "Commande") or (menu == "Opération" and operation == "COMMANDE"):
         donnee_agre = (
             donnee.groupby(["Prenom_Nom_RZ","Produit"])
             .agg({"Quantites": "sum"})
