@@ -84,25 +84,16 @@ def analyse_donnee(Chargement):
         st.dataframe(donnee)
         operation="Données"
     elif menu == "Opération":
-        fichier = st.sidebar.selectbox(
-            "Fichier utilisez", ("KAMLAC", "HORECA")
-        )
         # Sélectionner la plage de dates
         end_date=col[2].selectbox("Selectionnez une date",date1)
 
 
         # Filtrer les données selon la plage sélectionnée
         donnee = donnee[(donnee["Date"] == end_date)]
-        if fichier == "KAMLAC":
-            operation = st.sidebar.selectbox(
-                "Type d'opération", ("Commande", "Livraison", "Aucune")
-            )
-            donnee = donnee[donnee["Operation"] == operation]
-        elif fichier == "HORECA":
-            operation = st.sidebar.selectbox(
-                "Type d'opération", ("COMMANDE", "LIVRAISON", "AUCUNE")
-            )
-            donnee = donnee[donnee["Operation"] == operation]
+        operation = st.sidebar.selectbox(
+            "Type d'opération", ("Commande", "Livraison", "Aucune")
+        )
+        donnee = donnee[donnee["Operation"] == operation]
         if operation == "Aucune":
             nomcol = donnee.columns.tolist()
             nomcol.remove("Prix_Unitaire")
@@ -116,62 +107,33 @@ def analyse_donnee(Chargement):
         st.write(
             "La colonne Opération ne se trouve pas dans les colonnes selectionnées"
         )
-    if menu == "Opération":
-        if operation == "Livraison":
-            donnee_agre = (
-                donnee.groupby(["Date", "Prenom_Nom_RZ", "secteur","Produit"])
-                .agg({"Quantites": "sum", "Prix Total": "sum"})
-                .reset_index()
-            )
+    if menu == "Opération" and operation == "Livraison":
+        donnee_agre = (
+            donnee.groupby(["Date", "Prenom_Nom_RZ", "secteur","Produit"])
+            .agg({"Quantites": "sum", "Prix Total": "sum"})
+            .reset_index()
+        )
 
-            donnee_agre = donnee_agre.rename(
-            columns={
-                "Quantites": "Quantités",
-                "Prix Total": "Prix Total",
-            }
-            )
-            donnee_ordre = donnee_agre.sort_values(by=["Date", "Prenom_Nom_RZ"], ascending=False)
-        elif operation == "LIVRAISON":
-            donnee_agre = (
-                donnee.groupby(["Date","Promoteur", "SECTEUR","PRODUITS"])
-                .agg({"Quantites": "sum", "Prix Total": "sum"})
-                .reset_index()
-            )
+        donnee_agre = donnee_agre.rename(
+        columns={
+            "Quantites": "Quantités",
+            "Prix Total": "Prix Total",
+        }
+        )
+        donnee_ordre = donnee_agre.sort_values(by=["Date", "Prenom_Nom_RZ"], ascending=False)
+    elif menu == "Opération" and operation == "Commande":
+        donnee_agre = (
+            donnee.groupby(["Prenom_Nom_RZ","Produit"])
+            .agg({"Quantites": "sum"})
+            .reset_index()
+        )
 
-            donnee_agre = donnee_agre.rename(
-            columns={
-                "Quantites": "Quantités",
-                "Prix Total": "Prix Total",
-            }
-            )
-            donnee_ordre = donnee_agre.sort_values(by=["Date", "Promoteur"], ascending=False)
-    elif menu == "Opération":
-        if operation == "Commande":
-            donnee_agre = (
-                donnee.groupby(["Prenom_Nom_RZ","Produit"])
-                .agg({"Quantites": "sum"})
-                .reset_index()
-            )
-
-            donnee_agre = donnee_agre.rename(
-            columns={
-                "Quantites": "Quantités",
-            }
-            )
-            donnee_ordre = donnee_agre.sort_values(by=["Prenom_Nom_RZ"], ascending=False)
-        elif operation == "COMMANDE":
-            donnee_agre = (
-                donnee.groupby(["Promoteur","PRODUITS"])
-                .agg({"Quantites": "sum"})
-                .reset_index()
-            )
-
-            donnee_agre = donnee_agre.rename(
-            columns={
-                "Quantites": "Quantités",
-            }
-            )
-            donnee_ordre = donnee_agre.sort_values(by=["Promoteur"], ascending=False)
+        donnee_agre = donnee_agre.rename(
+        columns={
+            "Quantites": "Quantités",
+        }
+        )
+        donnee_ordre = donnee_agre.sort_values(by=["Prenom_Nom_RZ"], ascending=False)
 
 
     # 🔧 Fonction pour créer l'image avec les infos en haut
@@ -251,7 +213,7 @@ def analyse_donnee(Chargement):
     if menu == "Opération" :
         #st.subheader("Regroupement des ventes et ordonnées par Date et Prénom du RZ")
         st.dataframe(donnee_ordre)
-    if operation == "Commande" or operation == "COMMANDE":
+    if operation == "Commande":
         png_bytes = generate_png_report(donnee_ordre, date_max=end_date)
         # ✅ Afficher l'aperçu de l'image directement dans l'interface
         #st.image(png_bytes, caption="", use_container_width=True)
