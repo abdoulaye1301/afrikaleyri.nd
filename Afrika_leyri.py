@@ -70,7 +70,7 @@ def analyse_donnee(Chargement):
 
 
 
-    menu = st.sidebar.selectbox("Choisissez une option", ["D", "Opération"])
+    menu = st.sidebar.selectbox("Choisissez une option", ["Données", "Opération"])
 
     if menu == "Données":
         
@@ -84,15 +84,15 @@ def analyse_donnee(Chargement):
         st.dataframe(donnee)
         operation="Données"
     elif menu == "Opération":
+        fichier = st.sidebar.selectbox(
+            "Fichier utilisez", ("KAMLAC", "HORECA")
+        )
         # Sélectionner la plage de dates
         end_date=col[2].selectbox("Selectionnez une date",date1)
 
 
         # Filtrer les données selon la plage sélectionnée
         donnee = donnee[(donnee["Date"] == end_date)]
-        fichier = st.sidebar.selectbox(
-            "Fichier utilisez", ("KAMLAC", "HORECA")
-        )
         if fichier == "KAMLAC":
             operation = st.sidebar.selectbox(
                 "Type d'opération", ("Commande", "Livraison", "Aucune")
