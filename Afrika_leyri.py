@@ -107,7 +107,7 @@ def analyse_donnee(Chargement):
         st.write(
             "La colonne Opération ne se trouve pas dans les colonnes selectionnées"
         )
-    if menu == "Opération" and operation == "Livraison":
+    if menu == "Opération" and (operation == "Livraison" or operation == "LIVRAISON"):
         donnee_agre = (
             donnee.groupby(["Date", "Prenom_Nom_RZ", "secteur","Produit"])
             .agg({"Quantites": "sum", "Prix Total": "sum"})
@@ -121,7 +121,7 @@ def analyse_donnee(Chargement):
         }
         )
         donnee_ordre = donnee_agre.sort_values(by=["Date", "Prenom_Nom_RZ"], ascending=False)
-    elif menu == "Opération" and operation == "Commande":
+    elif menu == "Opération" and (operation == "Commande" or operation == "COMMANDE"):
         donnee_agre = (
             donnee.groupby(["Prenom_Nom_RZ","Produit"])
             .agg({"Quantites": "sum"})
@@ -213,7 +213,7 @@ def analyse_donnee(Chargement):
     if menu == "Opération" :
         #st.subheader("Regroupement des ventes et ordonnées par Date et Prénom du RZ")
         st.dataframe(donnee_ordre)
-    if operation == "Commande":
+    if operation == "Commande" or operation == "COMMANDE":
         png_bytes = generate_png_report(donnee_ordre, date_max=end_date)
         # ✅ Afficher l'aperçu de l'image directement dans l'interface
         #st.image(png_bytes, caption="", use_container_width=True)
