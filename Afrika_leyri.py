@@ -70,7 +70,7 @@ def analyse_donnee(Chargement):
 
 
 
-    menu = st.sidebar.selectbox("Choisissez une option", ["Données", "Opération"])
+    menu = st.sidebar.selectbox("Choisissez une option", ["D", "Opération"])
 
     if menu == "Données":
         
