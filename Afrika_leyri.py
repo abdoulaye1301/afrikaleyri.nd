@@ -123,7 +123,7 @@ def analyse_donnee(Chargement):
         donnee_ordre = donnee_agre.sort_values(by=["Date", "Prenom_Nom_RZ"], ascending=False)
     elif menu == "Opération" and operation == "Commande":
         donnee_agre = (
-            donnee.groupby(["Prenom_Nom_RZ","Produit"])
+            donnee.groupby(["Prenom_Nom_RZ","secteur","Produit"])
             .agg({"Quantites": "sum"})
             .reset_index()
         )
@@ -131,6 +131,8 @@ def analyse_donnee(Chargement):
         donnee_agre = donnee_agre.rename(
         columns={
             "Quantites": "Quantités",
+            "Prenom_Nom_RZ": "RZ",
+            "secteur": "Secteur"
         }
         )
         donnee_ordre = donnee_agre.sort_values(by=["Prenom_Nom_RZ"], ascending=False)
