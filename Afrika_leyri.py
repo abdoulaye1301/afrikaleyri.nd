@@ -135,7 +135,7 @@ def analyse_donnee(Chargement):
             "secteur": "Secteur"
         }
         )
-        donnee_ordre = donnee_agre.sort_values(by=["Prenom_Nom_RZ"], ascending=False)
+        donnee_ordre = donnee_agre.sort_values(by=["RZ"], ascending=False)
 
 
     # 🔧 Fonction pour créer l'image avec les infos en haut
